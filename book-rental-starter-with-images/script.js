@@ -3,25 +3,43 @@ document.querySelector('.burger').addEventListener('click', function(){
 })
 
 
-document.querySelector('.btncart').addEventListener('click', function(){
-    let cartBox = document.querySelector('.cart-box');
-    
-    if (cartBox.style.display === 'block') {
-        cartBox.style.display = 'none';
-    } else {
-        cartBox.style.display = 'block';
-        cartBox.innerHTML = `
-        <div style="color: black;">
-        <a href="#">Cart</a>
+let cartItems = [];
+let cartBox = document.querySelector('.cart-box');
+let buttons = document.querySelectorAll('.rent-btn');
+
+for (let i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', function () {
+        let book = buttons[i].closest('.book');
+        let title = book.querySelector('.title').textContent;
+        let price = parseFloat(book.querySelector('.price').dataset.price);
+
+        cartItems.push({ title: title, days: 1, price: price });
+
+        renderCart();
+    });
+}
+
+function renderCart() {
+    let total = 0;
+    let cartHTML = `
         <h2>Your Rental Cart</h2>
         <ul>
-        <li>Pride and Prejudice-3 days(s)-<br> $9.00</li>
-        <li>Moby-Dick-4 days(s)- $4.00</li>
-        <li>War nad Peace-3 days(s)- $4.00</li>
-        <li>The Great Gatsby-4 days(s)- $8.00</li>
-        <li>The Catcher in the Rye-4 days(s)- <br>$10.00</li>
+    `;
+
+    for (let i = 0; i < cartItems.length; i++) {
+        let item = cartItems[i];
+        let cost = item.price * item.days;
+        total += cost;
+        cartHTML += `<li>${item.title} - ${item.days} day(s) - $${cost.toFixed(2)}</li>`;
+    }
+
+    cartHTML += `
         </ul>
-        <span>Total: $35.50</span><br>
+        <span>Total: $${total.toFixed(2)}</span><br>
         <button>Confirm Rental</button>
-    </div>`;}
-})
+    `;
+
+    cartBox.style.display = 'block';
+    cartBox.style.color = 'black';
+    cartBox.innerHTML = cartHTML;
+}
